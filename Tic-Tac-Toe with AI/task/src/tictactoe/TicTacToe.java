@@ -1,12 +1,14 @@
 package tictactoe;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToe {
+    final Random random = new Random();
     final Scanner scanner = new Scanner(System.in);
-    String initLine;
+    private char[][] table = new char[3][3];
 
-    private int setNum(char[][] chars, char player) {
+    private int setNum(char player) {
         final Scanner scanner = new Scanner(System.in);
         boolean flag = true;
         while (flag) {
@@ -25,9 +27,9 @@ public class TicTacToe {
                 if (x > 2 || x < 0 || y < 0 || y > 2) {
                     System.out.println("Coordinates should be from 1 to 3!");
                 } else {
-                    if (chars[2 - y][x] == ' ') {
-                        chars[2 - y][x] = player;
-                        printTable(chars);
+                    if (table[2 - y][x] == ' ') {
+                        table[2 - y][x] = player;
+                        printTable();
                         flag = false;
                     } else {
                         System.out.println("This cell is occupied! Choose another one!");
@@ -42,38 +44,51 @@ public class TicTacToe {
         return 0;
     }
 
-    private String checkRes(char[][] chars) {
-        if (isWin(chars, 'X') && isWin(chars, 'O') || isImpossible(chars)) {
+    private void setNum() {
+        boolean flag = true;
+        while (flag) {
+            int x = random.nextInt(3), y = random.nextInt(3);
+            if (table[2 - y][x] == ' ') {
+                System.out.println("Making move level \"easy\"");
+                table[2 - y][x] = 'O';
+                printTable();
+                flag = false;
+            }
+        }
+    }
+
+    private String checkRes() {
+        if (isWin('X') && isWin('O') || isImpossible()) {
             return "Impossible";
-        } else if (!isWin(chars, 'X') && !isWin(chars, 'O') && isEmpty(chars)) {
+        } else if (!isWin('X') && !isWin('O') && isEmpty()) {
             return "Game not finished";
-        } else if (!isEmpty(chars) && !isWin(chars, 'X') && !isWin(chars, 'O')) {
+        } else if (!isEmpty() && !isWin('X') && !isWin('O')) {
             return "Draw";
         }
-        if (isWin(chars, 'O')) {
+        if (isWin('O')) {
             return "O wins";
-        } else if (isWin(chars, 'X')) {
+        } else if (isWin('X')) {
             return "X wins";
         }
         return "";
     }
 
-    private void printTable(char[][] chars) {
+    private void printTable() {
         System.out.println("---------");
         for (int i = 0; i < 3; i++) {
             System.out.print("| ");
             for (int j = 0; j < 3; j++) {
-                System.out.print(chars[i][j] + " ");
+                System.out.print(table[i][j] + " ");
             }
             System.out.println("|");
         }
         System.out.println("---------");
     }
 
-    private boolean isEmpty(char[][] chars) {
+    private boolean isEmpty() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (chars[i][j] == ' ') {
+                if (table[i][j] == ' ') {
                     return true;
                 }
             }
@@ -81,25 +96,25 @@ public class TicTacToe {
         return false;
     }
 
-    private boolean isWin(char[][] chars, char value) {
-        boolean horizontal = (value == chars[0][0] && value == chars[0][1] && value == chars[0][2]) ||
-                (value == chars[1][0] && value == chars[1][1] && value == chars[1][2]) ||
-                (value == chars[2][0] && value == chars[2][1] && value == chars[2][2]);
-        boolean vertical = (value == chars[0][0] && value == chars[1][0] && value == chars[2][0]) ||
-                (value == chars[0][1] && value == chars[1][1] && value == chars[2][1]) ||
-                (value == chars[0][2] && value == chars[1][2] && value == chars[2][2]);
-        boolean diagonal = (value == chars[0][0] && value == chars[1][1] && value == chars[2][2]) ||
-                (value == chars[0][2] && value == chars[1][1] && value == chars[2][0]);
+    private boolean isWin(char value) {
+        boolean horizontal = (value == table[0][0] && value == table[0][1] && value == table[0][2]) ||
+                (value == table[1][0] && value == table[1][1] && value == table[1][2]) ||
+                (value == table[2][0] && value == table[2][1] && value == table[2][2]);
+        boolean vertical = (value == table[0][0] && value == table[1][0] && value == table[2][0]) ||
+                (value == table[0][1] && value == table[1][1] && value == table[2][1]) ||
+                (value == table[0][2] && value == table[1][2] && value == table[2][2]);
+        boolean diagonal = (value == table[0][0] && value == table[1][1] && value == table[2][2]) ||
+                (value == table[0][2] && value == table[1][1] && value == table[2][0]);
         return horizontal || vertical || diagonal;
     }
 
-    private boolean isImpossible(char[][] chars) {
+    private boolean isImpossible() {
         int countX = 0, countO = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (chars[i][j] == 'X') {
+                if (table[i][j] == 'X') {
                     ++countX;
-                } else if (chars[i][j] == 'O') {
+                } else if (table[i][j] == 'O') {
                     ++countO;
                 }
             }
@@ -108,39 +123,20 @@ public class TicTacToe {
     }
 
     public void startGame() {
-        System.out.println("Enter cells: ");
-        initLine = scanner.nextLine();
-        char[][] table = new char[3][3];
-        int k = 0;
-        int countX = 0, countO = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (initLine.charAt(k) == '_') {
-                    table[i][j] = ' ';
-                } else {
-                    table[i][j] = initLine.charAt(k);
-                }
-                if (initLine.charAt(k) == 'X') ++countX;
-                else if (initLine.charAt(k) == 'O') ++countO;
-                k++;
+                table[i][j] = ' ';
             }
         }
-        printTable(table);
+        printTable();
         char player;
-        if (countX > countO) player = 'O';
-        else player = 'X';
-        int i = 1;
-        while (i != 0) {
-            if (setNum(table, player) == 0) {
-                if (player == 'X') {
-                    player = 'O';
-                } else {
-                    player = 'X';
-                }
-                System.out.println(checkRes(table));
-                --i;
-            }
+        player = 'X';
+        while (true) {
+            setNum(player);
+            if (!checkRes().equals("Game not finished")) break;
+            setNum();
+            if (!checkRes().equals("Game not finished")) break;
         }
-        System.out.println(checkRes(table));
+        System.out.println(checkRes());
     }
 }
