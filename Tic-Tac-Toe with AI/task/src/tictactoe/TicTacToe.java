@@ -6,10 +6,9 @@ import java.util.Scanner;
 public class TicTacToe {
     final Random random = new Random();
     final Scanner scanner = new Scanner(System.in);
-    private char[][] table = new char[3][3];
+    private final char[][] table = new char[3][3];
 
-    private int setNum(char player) {
-        final Scanner scanner = new Scanner(System.in);
+    private void setNum(char player) {
         boolean flag = true;
         while (flag) {
             System.out.println("Enter the coordinates: ");
@@ -19,7 +18,7 @@ public class TicTacToe {
                 x = Integer.parseInt(x1) - 1;
             } catch (NumberFormatException e) {
                 System.out.println("You should enter numbers!");
-                return 1;
+                return;
             }
             String y1 = scanner.next();
             try {
@@ -37,11 +36,9 @@ public class TicTacToe {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("You should enter numbers!");
-                return 1;
+                return;
             }
-
         }
-        return 0;
     }
 
     private void setNum() {
