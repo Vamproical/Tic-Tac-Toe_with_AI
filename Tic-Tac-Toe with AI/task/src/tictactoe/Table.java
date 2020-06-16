@@ -20,6 +20,10 @@ public class Table {
         return table[row][column] == ' ';
     }
 
+    boolean isEmpty(Point point) {
+        return isEmpty(point.getX(), point.getY());
+    }
+
     void setXO(int x, int y) {
         if (!isEmpty(x, y) || win != 'N') {
             throw new IllegalStateException();
@@ -28,6 +32,26 @@ public class Table {
         int row = 3 - y;
         table[row][column] = nextChar();
         isNext = !isNext;
+        win = checkWinner();
+    }
+
+    void set(Point point) {
+        int x = point.getX();
+        int y = point.getY();
+        setXO(x,y);
+    }
+
+    void unset(int x, int y) {
+        if (isEmpty(x, y)) {
+            throw new IllegalStateException();
+        }
+
+        int column = x - 1;
+        int row = 3 - y;
+
+        table[row][column] = ' ';
+        isNext = !isNext;
+
         win = checkWinner();
     }
 
@@ -115,4 +139,9 @@ public class Table {
     public boolean continues() {
         return win == 'N';
     }
+
+    public char getWin() {
+        return win;
+    }
+
 }
