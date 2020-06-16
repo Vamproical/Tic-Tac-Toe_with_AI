@@ -7,6 +7,7 @@ public class TicTacToe {
     final Random random = new Random();
     final Scanner scanner = new Scanner(System.in);
     private final char[][] table = new char[3][3];
+    private final char playerX = 'X', playerO = 'O';
 
     private void setNum(char player) {
         boolean flag = true;
@@ -41,13 +42,13 @@ public class TicTacToe {
         }
     }
 
-    private void setNum() {
+    private void setNumAI(char player) {
         boolean flag = true;
         while (flag) {
             int x = random.nextInt(3), y = random.nextInt(3);
             if (table[2 - y][x] == ' ') {
                 System.out.println("Making move level \"easy\"");
-                table[2 - y][x] = 'O';
+                table[2 - y][x] = player;
                 printTable();
                 flag = false;
             }
@@ -119,21 +120,56 @@ public class TicTacToe {
         return countX - countO >= 2 || countO - countX >= 2;
     }
 
-    public void startGame() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                table[i][j] = ' ';
+    public void menu() {
+        boolean flag = true;
+        while (flag) {
+            System.out.println("Input command: ");
+            String[] input = scanner.nextLine().split(" ");
+            if (input[0].equals("exit")) {
+                flag = false;
+            } else if (input.length < 3) {
+                System.out.println("Bad parameters!");
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        table[i][j] = ' ';
+                    }
+                }
+                printTable();
+                if (input[1].equals("easy") && input[2].equals("easy")) {
+                    while (true) {
+                        setNumAI(playerX);
+                        if (!checkRes().equals("Game not finished")) break;
+                        setNumAI(playerO);
+                        if (!checkRes().equals("Game not finished")) break;
+                    }
+                    System.out.println(checkRes());
+                } else if (input[1].equals("user") && input[2].equals("user")) {
+                    while (true) {
+                        setNum(playerX);
+                        if (!checkRes().equals("Game not finished")) break;
+                        setNum(playerO);
+                        if (!checkRes().equals("Game not finished")) break;
+                    }
+                    System.out.println(checkRes());
+                } else if (input[1].equals("user") && input[2].equals("easy")) {
+                    while (true) {
+                        setNum(playerX);
+                        if (!checkRes().equals("Game not finished")) break;
+                        setNumAI(playerO);
+                        if (!checkRes().equals("Game not finished")) break;
+                    }
+                    System.out.println(checkRes());
+                } else if (input[1].equals("easy") && input[2].equals("user")) {
+                    while (true) {
+                        setNumAI(playerX);
+                        if (!checkRes().equals("Game not finished")) break;
+                        setNum(playerO);
+                        if (!checkRes().equals("Game not finished")) break;
+                    }
+                    System.out.println(checkRes());
+                }
             }
         }
-        printTable();
-        char player;
-        player = 'X';
-        while (true) {
-            setNum(player);
-            if (!checkRes().equals("Game not finished")) break;
-            setNum();
-            if (!checkRes().equals("Game not finished")) break;
-        }
-        System.out.println(checkRes());
     }
 }
